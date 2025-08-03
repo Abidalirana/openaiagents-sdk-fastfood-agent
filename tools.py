@@ -80,3 +80,35 @@ def parse_order(text: str) -> OrderIn:
 @function_tool
 def get_status(order_id: str) -> str:
     return f"🕒 Order {order_id} is being prepared!"
+#==============================================
+# ---------- Order Details (Fallback Info) ----------
+class OrderDetails(BaseModel):
+    order_type: str  # delivery, dine-in, take-away
+    phone: str = ""
+    address: str = ""
+
+@function_tool
+def get_order_details(details: OrderDetails) -> str:
+    """
+    Collects order type and optional delivery details.
+
+    Args:
+        order_type: delivery, dine-in, or take-away.
+        phone: (optional) phone number for delivery.
+        address: (optional) address for delivery.
+
+    Returns:
+        A confirmation message.
+    """
+    order_type = details.order_type.lower()
+    if order_type == "delivery":
+        return (
+            f"🛵 Your order will be delivered to {details.address}. "
+            f"We may contact you at {details.phone}. Thank you!"
+        )
+    elif order_type == "dine-in":
+        return "🍽️ Your dine-in order is confirmed. We look forward to serving you!"
+    elif order_type == "take-away":
+        return "🥡 Your take-away order is confirmed. It’ll be ready soon!"
+    else:
+        return "❌ Invalid order type. Please choose delivery, dine-in, or take-away."
